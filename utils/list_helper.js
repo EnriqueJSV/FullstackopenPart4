@@ -14,7 +14,32 @@ const totalLikes = (blogs) => {
   }
 };
 
+const favoriteBlog = (blogs) => {
+  const highest = blogs.reduce((fav, element) => {
+    if (fav < element.likes) {
+      return (fav = element.likes);
+    }
+    return fav;
+  }, 0);
+
+  const newArray = blogs.reduce(
+    (array, element) => array.concat(element.likes),
+    []
+  );
+
+  const getIndex = newArray.indexOf(highest);
+
+  const favorite = {
+    title: blogs[getIndex].title,
+    author: blogs[getIndex].author,
+    likes: blogs[getIndex].likes,
+  };
+
+  return favorite;
+};
+
 module.exports = {
   dummy,
   totalLikes,
+  favoriteBlog,
 };
