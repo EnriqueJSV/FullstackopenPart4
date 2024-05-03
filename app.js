@@ -1,5 +1,6 @@
 const config = require("./utils/config");
 const express = require("express");
+require("express-async-errors");
 const app = express();
 const cors = require("cors");
 const blogsRouter = require("./controllers/blogs");
@@ -20,13 +21,13 @@ mongoose
     logger.error("error connecting to MongoDB: ", error.message)
   );
 
-app.use(cors()) //info para futuro front
-app.use(express.json()) //permite post
-app.use(middleware.requestLogger)
+app.use(cors()); //info para futuro front
+app.use(express.json()); //permite post
+app.use(middleware.requestLogger);
 
-app.use('/api/blogs', blogsRouter)
+app.use("/api/blogs", blogsRouter);
 
-app.use(middleware.unknownEndpoint)
-app.use(middleware.errorHandler)
+app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 module.exports = app;
