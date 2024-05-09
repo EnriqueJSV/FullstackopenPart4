@@ -102,6 +102,17 @@ test("blog without URL is not added", async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length);
 });
 
+test("if a blog is deleted return status 204", async () => {
+  const blogsAtStart = await helper.blogsInDb();
+  const blogToDelete = blogsAtStart[0];
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const response = await helper.blogsInDb();
+
+  assert.strictEqual(response.length, helper.initialBlogs.length - 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
