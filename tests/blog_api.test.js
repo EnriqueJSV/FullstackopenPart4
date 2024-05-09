@@ -113,6 +113,23 @@ test("if a blog is deleted return status 204", async () => {
   assert.strictEqual(response.length, helper.initialBlogs.length - 1);
 });
 
+test("can update blogs likes", async () => {
+  const blogList = await helper.blogsInDb();
+  const blogToUpdate = blogList[0];
+  const blogUpdated = {
+    title: blogToUpdate.title,
+    author: blogToUpdate.blog,
+    url: blogToUpdate.url,
+    likes: blogToUpdate.likes + 1,
+  };
+
+  await api.put(`/api/blogs/${blogToUpdate.id}`).send(blogUpdated).expect(200);
+
+  const response = await helper.blogsInDb();
+
+  assert.strictEqual(response[0].likes, helper.initialBlogs[0].likes + 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
