@@ -60,6 +60,54 @@ describe("when there is initially one user in db", () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length);
   });
+
+  test("creation fails if length of the password are 3 or less", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root2",
+      name: "Superuser",
+      password: "SU",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    assert(
+      result.body.error.includes("password must be at least 3 characters long")
+    );
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+  });
+
+  test("creation fails if length of the username are 3 or less", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "SU",
+      name: "Superuser",
+      password: "admin",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    assert(
+      result.body.error.includes(
+        "User validation failed: username: Path `username` (`SU`) is shorter than the minimum allowed length (3)."
+      )
+    );
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+  });
 });
 
 after(async () => {
