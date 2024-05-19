@@ -26,6 +26,7 @@ mongoose
 app.use(cors()); //info para futuro front
 app.use(express.json()); //permite post
 app.use(middleware.requestLogger);
+app.use(middleware.tokenExtractor);
 
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
