@@ -19,7 +19,8 @@ blogsRouter.post("/", async (req, res) => {
     return res.status(401).json({ error: "token invalid" });
   }
 
-  const user = await User.findById(decodedToken.id);
+  // using middleware userExtractor
+  const user = req.user;
 
   const blog = new Blog({
     title: body.title,
@@ -38,14 +39,15 @@ blogsRouter.post("/", async (req, res) => {
 
 // delete
 blogsRouter.delete("/:id", async (req, res) => {
-  const decodedToken = jwt.verify(req.token, process.env.SECRET);
 
   const blog = await Blog.findById(req.params.id);
   const userBlog = blog.user;
 
-  if (!decodedToken.id) {
+  const user = req.user;
+
+  if (!user.id) {
     return res.status(401).json({ error: "token invalid" });
-  } else if (userBlog.toString() === decodedToken.id) { //user verify
+  } else if (userBlog.toString() === user.id) {
     await Blog.findByIdAndDelete(req.params.id);
     res.status(204).end();
   } else {
